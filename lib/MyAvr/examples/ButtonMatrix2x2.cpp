@@ -1,38 +1,36 @@
-/*
-Das hier ist ein Beispiel für eine Anwendung mit 2x2 button matrix.
-Es wird während des codes ein pin auf input mit pullup widerstand konfiguriert
-Ein pin wird als output sink konfiguriert um den Ground zu bilden.
-die zwei weiteren pins werden auf output high gesetzt um störungen zu vermeiden.
-
-Im Beispiel wurde die Matrix folgendermaßen angeschlossen:
-L1 -> PD2
-L2 -> PD3
-R1 -> PD4
-R2 -> PD5
-
-
-*/
-
+/**
+ * @file    ButtonMatrix2x2.cpp
+ * @brief   Example program demonstrating the usage of 2x2 button matrix.
+ * @author  lusmdl
+ * @date    06.02.2024
+ * 
+ * This is an example of an application with 2x2 button matrix.
+ * During the code, one pin is configured to input with pullup resistor
+ * One pin is configured as output sink to form the ground.
+ * the other two pins are set to output high to avoid interference.
+ * 
+ * In the example, the matrix was connected as follows:
+ * L1 -> PD2
+ * L2 -> PD3
+ * R1 -> PD4
+ * R2 -> PD5
+ */
 
 
 #include <MyAvr.hpp>
 
 
-
-// Objekt für LED Streifen im Wohnzimmer
-MyAtmega328p myAVR(8000000UL);
+MyAtmega328p myAVR(F_CPU);
 
 int main(void)
 {
   
-  // teste den Mikrocontroller
   myAVR.test(100);
 
-  // initialisiere die UART
   myAVR.initUart(9600);
 
-  // konfiguriere Taster
-  uint8_t matrixPins[4] {PD2, PD3, PD4, PD5};
+  // config button matrix
+  uint8_t matrixPins[] {PD2, PD3, PD4, PD5};
   MyButtonMatrix2x2 btnMatrix(DDRD, PORTD, PIND, matrixPins);
 
 
@@ -44,14 +42,10 @@ int main(void)
 
   for ( int i = 0; i < 4; i++)
   {
-    /* code */
     myAVR.printUart ("button #" + String(i) + ": " +  String(btnMatrix.getButtonStatus(i)) + "\n");
   
   }
     myAVR.delayMs(1000);
-  
-  
-  
   }
   return 0;
 }
