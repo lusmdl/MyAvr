@@ -1,18 +1,19 @@
-
-
-
-/*
-Verwenden Sie die Methoden `writeToEEPROM()` und `readFromEEPROM()`, 
-um den Wert einer ganzen Zahl in den EEPROM-Speicher zu schreiben 
-bzw. aus dem EEPROM-Speicher zu lesen.
-*/
-
+/**
+ * @file    Eeprom.cpp
+ * @brief   Example program demonstrating the usage of the EEPROM.
+ * @author  lusmdl
+ * @date    06.02.2024
+ * 
+ * Verwenden Sie die Methoden `writeToEEPROM()` und `readFromEEPROM()`, 
+ * um den Wert einer ganzen Zahl in den EEPROM-Speicher zu schreiben 
+ * bzw. aus dem EEPROM-Speicher zu lesen.
+ */
 
 #include <MyAvr.hpp>
 
 
 
-MyAtmega328p myAVR(8000000UL);
+MyAtmega328p myAVR(F_CPU);
 
 int value = myAVR.readFromEEPROM(0x10);
 
