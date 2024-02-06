@@ -1,19 +1,21 @@
 #ifndef MYAVR_HPP
 #define MYAVR_HPP
 
+
 /* AVR */
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
+
 /* MY */
 #include <Atmega328pISR.h>
 
+
 /* C/C++ */
 #include <WString.h>
-#include <math.h>
-#include <stdlib.h>
-
+//#include <math.h>
+//#include <stdlib.h>
 
 
 // MACROS
@@ -21,13 +23,9 @@
 #define BITMASK(bit) (1 << (bit))
 
 
-
 // USER DEFINED TYPES
 
 typedef uint64_t time;
-
-
-
 
 
 // ENUMS
@@ -95,119 +93,54 @@ enum sleepModes
 };
 
 
-
 /* CLASSES */
+
+
+/* BASIS CLASSES */
 
 class MyController {
 
     private:
 
 
-
     protected:
 
         /* DATA */ 
 
-        /*
-        CPU Frequenz.
-        Atmega328p standard = 8 Mhz -> 8000000UL
-        */
-        unsigned long cpuFreq;
+        unsigned long cpuFreq; //  CPU Frequenz - Atmega328p standard = 8 Mhz -> 8000000UL
 
 
-
-
-        /* METHODEN */
-
-
-
-
-
-
+        /* METHODS */
 
 
     public:
 
-        /* METHODEN */
+        /* METHODS */
 
         void nop();
         void delayUs(uint16_t us);
         void delayMs(uint32_t ms);
 
 
-
-        // GETTER
+        /* GETTER */
 
         bool getBit(volatile uint8_t &reg, uint8_t bit);
 
 
-        // SETTER
+        /* SETTER */
 
         void setBit(volatile uint8_t &reg, uint8_t bit, bool value = true);
         void clearBit(volatile uint8_t &reg, uint8_t bit);
         void setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value = true);
         void clearBitMask(volatile uint8_t &reg, uint8_t bitMask);
         void setGpioConfig(gpioMode mode, volatile uint8_t &DDxn, volatile uint8_t &PORTxn, uint8_t bit);
-
-
-
-
-
 };
 
 
-
-class MyButton : public MyController {
-
-
-    private:
-        volatile uint8_t* registerPtr;  // Zeiger auf das Register des Tasters
-        uint8_t bit;                    // Bitposition des Tasters im Register
-        bool pushed;                    // Tasterstatus (gedrückt oder nicht gedrückt)
-        uint32_t numbersGetPushed;      // Anzahl der Tasterbetätigungen
-        bool paraInvert;                // invert the HIGH Signal (usefull if pullup is in use)
-
-        // GETTER
-
-        //bool getBit(volatile uint8_t &reg, uint8_t bit);
-
-    public:
-
-        // KONSTRUKTOR
-
-        MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertButton = false);
+/* µController */
 
 
-
-        // GETTER
-
-        bool getStatus();
-
-
-        // SETTER 
-
-        void setStatus(uint32_t newValue = 0);
-
-
-
-
-
-
-
-
-
-
-
-
-};
-
-
-
-
-
-
-
-
+/* ATMEGA */
 
 /*
 Klasse mit Methoden, rund um den Atmega328p von Microchip
@@ -216,135 +149,120 @@ class MyAtmega328p : public MyController {
     
     private:
 
-        
-
-
-
-
-        // METHODEN
+        /* METHODS */
 
         void putcharUart(char c);
 
 
+        /* GETTER */
 
-        // GETTER
 
-
-        // SETTER
+        /* SETTER */
 
         uint32_t setTC01Prescaler(tcPrescalers prescaler , volatile uint8_t &reg, uint8_t bit02, uint8_t bit01, uint8_t bit00);
 
 
-
-
     protected:
+
 
     public:
         
-        // DATA
+        /* DATA */
 
-        /*
-        Zeit in millisekunden in der der Controller läuft
-        */
-        volatile time millis;
+        volatile time millis; // Zeit in millisekunden in der der Controller läuft
 
 
-        // Konstruktor
+        /* CONSTRUCTOR */
 
         MyAtmega328p(unsigned long freq);
         
-        
-        
 
-        // METHODEN
+        /* METHODS */
 
         void test(uint16_t delay);
         void initUart(uint32_t baudrate);
         void sleep(sleepModes sleepMode, uint8_t powerReductionBits, bool enableBODSleep);
 
 
-
-
-
-        // GETTER
+        /* GETTER */
 
         uint8_t readFromEEPROM(uint16_t address);
         void readFromEEPROM(uint16_t address, String& str, size_t bufferSize);
 
 
-
-
-
-        // SETTER
+        /* SETTER */
 
         void printUart(const char* str);
         void printUart(const String& str);
         void writeToEEPROM(uint16_t address, uint8_t value);
         void writeToEEPROM(uint16_t address, const String& str);
         void setTC0Config(tcModes mode, tcPrescalers prescaler, time topTime = 1);
-
-
-
-
 };
 
 
+/* PERIPHERALS */
 
-
-
-
-
-
-
-
-
-
-
-
-class MyButtonMatrix2x2 : protected MyController {
-
+class MyButton : private MyController {
 
     private:
-    
-    static const uint8_t maxBtn {4};
-    volatile uint8_t* registerPtrDataDirection;  // Zeiger auf das Register des Tasters
-    volatile uint8_t* registerPtrOutput;  // Zeiger auf das Register des Tasters
-    volatile uint8_t* registerPtrInput;  // Zeiger auf das Register des Tasters
-    uint8_t bit [maxBtn];                    // Bitposition des Tasters im Register
+
+        /* DATA */
+
+        volatile uint8_t* registerPtr;  // Zeiger auf das Register des Tasters
+        uint8_t bit;                    // Bitposition des Tasters im Register
+        bool pushed;                    // Tasterstatus (gedrückt oder nicht gedrückt)
+        uint32_t numbersGetPushed;      // Anzahl der Tasterbetätigungen
+        bool paraInvert;                // invert the HIGH Signal (usefull if pullup is in use)
         
+
+    protected:
+
+
+    public:
+
+        /* CONSTRUCTOR */
+
+        MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertButton = false);
+
+
+        /* GETTER */
+
+        bool getStatus();
+
+
+        /* SETTER */ 
+
+        void setStatus(uint32_t newValue = 0);
+};
+
+
+class MyButtonMatrix2x2 : private MyController {
+
+    private:
+
+        /* DATA */
+    
+        static const uint8_t maxBtn {4};
+        volatile uint8_t* registerPtrDataDirection;  // Zeiger auf das Register des Tasters
+        volatile uint8_t* registerPtrOutput;  // Zeiger auf das Register des Tasters
+        volatile uint8_t* registerPtrInput;  // Zeiger auf das Register des Tasters
+        uint8_t bit [maxBtn];                    // Bitposition des Tasters im Register
 
 
     protected:
 
 
-
-
     public:
 
-    // KONSTRUKTOR
+        /* CONSTRUCTOR */
 
-    MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& PORTXn, volatile uint8_t& PINXn, uint8_t bitPosition[maxBtn]);
-
-
-    /* GETTER */
+        MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& PORTXn, volatile uint8_t& PINXn, uint8_t bitPosition[maxBtn]);
 
 
-    bool getButtonStatus (uint8_t button);
+        /* GETTER */
 
-
-
-
-
-
-
-
+        bool getButtonStatus (uint8_t button);
 };
 
 
-
-
-
-
 #endif
-
-
