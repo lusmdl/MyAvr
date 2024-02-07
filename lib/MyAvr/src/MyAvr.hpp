@@ -14,8 +14,6 @@
 
 /* C/C++ */
 #include <WString.h>
-//#include <math.h>
-//#include <stdlib.h>
 
 
 // MACROS
