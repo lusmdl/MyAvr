@@ -21,11 +21,6 @@
 #define BITMASK(bit) (1 << (bit))
 
 
-// USER DEFINED TYPES
-
-typedef uint64_t time;
-
-
 // ENUMS
 
 /*
@@ -167,7 +162,7 @@ class MyAtmega328p : public MyController {
         
         /* DATA */
 
-        volatile time millis; // Zeit in millisekunden in der der Controller läuft
+        volatile uint64_t millis; // Zeit in millisekunden in der der Controller läuft
 
 
         /* CONSTRUCTOR */
@@ -194,7 +189,7 @@ class MyAtmega328p : public MyController {
         void printUart(const String& str);
         void writeToEEPROM(uint16_t address, uint8_t value);
         void writeToEEPROM(uint16_t address, const String& str);
-        void setTC0Config(tcModes mode, tcPrescalers prescaler, time topTime = 1);
+        void setTC0Config(tcModes mode, tcPrescalers prescaler, uint8_t topValue = 255);
 };
 
 

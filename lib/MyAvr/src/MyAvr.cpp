@@ -578,7 +578,7 @@ Konfiguriere Timer/Counter 0
 | 7     | 1     | 1     | 1     | Fast PWM                        | OCRA  | BOTTOM TOP
 
 */
-void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, time topTime)
+void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, uint8_t topValue)
 {
 
 
@@ -595,9 +595,13 @@ void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, time topT
     setBit(TCCR0B, WGM02, 0);
 
     // Setze den Vergleichswert für den CTC-Modus
+    /*
+    don't use this calculation. Do this in the main code instead!
     auto clkPerMillisekond { ( cpuFreq / N ) / 1000 };
     OCR0A = ( ( clkPerMillisekond * topTime ) - 1 );
-       
+
+    */
+    OCR0A = topValue;
 
     // interrupt aktivieren
     setBit(TIMSK0, OCIE0A);
