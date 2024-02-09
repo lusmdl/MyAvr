@@ -1174,7 +1174,7 @@ bool MyButtonMatrix2x2 ::getButtonStatus(uint8_t button) {
   nop();
 
   
-  return getBit(*registerPtrInput, bit[sense])? true : false;
+  return getBit(*registerPtrInput, bit[sense])? false : true;
 
 }
 
