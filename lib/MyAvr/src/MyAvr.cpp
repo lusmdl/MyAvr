@@ -721,13 +721,14 @@ void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, uint8_t t
   {
   case ctc:
 
-    // prescaler
-    auto N = setTC01Prescaler(prescaler, TCCR0B, CS02, CS01, CS00);
-
     // ctc modus einrichten
     setBit(TCCR0A, WGM00, 0);
     setBit(TCCR0A, WGM01, 1);
     setBit(TCCR0B, WGM02, 0);
+
+    // prescaler
+    auto N = setTC01Prescaler(prescaler, TCCR0B, CS02, CS01, CS00);
+
 
     // Setze den Vergleichswert für den CTC-Modus
     /*
