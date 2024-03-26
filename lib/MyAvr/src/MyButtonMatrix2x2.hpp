@@ -9,14 +9,21 @@ class MyButtonMatrix2x2 : private MyController {
 
     private:
 
-        // DATA
+        // MEMBER
     
-        static const uint8_t maxBtn {4};
-        volatile uint8_t* registerPtrDataDirection;  // Zeiger auf das Register des Tasters
-        volatile uint8_t* registerPtrOutput;  // Zeiger auf das Register des Tasters
-        volatile uint8_t* registerPtrInput;  // Zeiger auf das Register des Tasters
-        uint8_t bit [maxBtn];                    // Bitposition des Tasters im Register
+        static const uint8_t BTN_MAX_ {4};
 
+        // Zeiger auf das Register des Tasters
+        volatile uint8_t* ptrDataDirectionRegister_;
+
+        // Zeiger auf das Register des Tasters
+        volatile uint8_t* ptrOutputRegister_;
+
+        // Zeiger auf das Register des Tasters
+        volatile uint8_t* ptrInputRegister_;
+
+        // Bitposition des Tasters im Register
+        uint8_t bit_ [BTN_MAX_];                    
 
     protected:
 
@@ -24,12 +31,12 @@ class MyButtonMatrix2x2 : private MyController {
     public:
 
         // CONSTRUCTOR
-        MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& PORTXn, volatile uint8_t& PINXn, uint8_t bitPosition[maxBtn]);
+
+        MyButtonMatrix2x2(volatile uint8_t& ddxn, volatile uint8_t& portxn, volatile uint8_t& pinxn, uint8_t bit_position[BTN_MAX_]);
 
 
         // GETTER
 
         bool getButtonStatus (uint8_t button);
 };
-
 #endif

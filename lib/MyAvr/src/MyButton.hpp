@@ -10,14 +10,22 @@ class MyButton : private MyController {
 
     private:
 
-        // DATA
+        // MEMBER
 
-        volatile uint8_t* registerPtr;  // Zeiger auf das Register des Tasters
-        uint8_t bit;                    // Bitposition des Tasters im Register
-        bool pushed;                    // Tasterstatus (gedrückt oder nicht gedrückt)
-        uint32_t numbersGetPushed;      // Anzahl der Tasterbetätigungen
-        bool paraInvert;                // invert the HIGH Signal (usefull if pullup is in use)
+        // Zeiger auf das Register des Tasters
+        volatile uint8_t* ptrRegister_;
+
+        // Bitposition des Tasters im Register
+        uint8_t bit_;
+
+        // Tasterstatus (gedrückt oder nicht gedrückt)
+        bool pushed_;
         
+        // Anzahl der Tasterbetätigungen
+        uint32_t numberGetPushed_;
+        
+        // invert the HIGH Signal (usefull if pullup is in use)
+        bool enableInvert_;
 
     protected:
 
@@ -25,8 +33,8 @@ class MyButton : private MyController {
     public:
 
         // CONSTRUCTOR
-
-        MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertButton = false);
+        
+        MyButton(volatile uint8_t& pinxn, uint8_t bit_position, bool invert = false);
 
 
         // GETTER
@@ -36,7 +44,7 @@ class MyButton : private MyController {
 
         // SETTER
 
-        void setStatus(uint32_t newValue = 0);
+        void setStatus(uint32_t value_new = 0);
 };
 
 #endif

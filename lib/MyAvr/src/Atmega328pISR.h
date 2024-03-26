@@ -5,6 +5,7 @@
 
 
 extern "C" {
+
     // External Interrupt Request 0
     ISR(INT0_vect);
     
@@ -80,6 +81,4 @@ extern "C" {
     // Store Program Memory Ready
     ISR(SPM_READY_vect);
 }
-
-
 #endif

@@ -18,11 +18,14 @@
  * @example 
  * MyButtonMatrix2x2 matrix(PORTD, PORTD, PIND, {0, 1, 2, 3});
  */
-MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& PORTXn, volatile uint8_t& PINXn, uint8_t bitPosition[4] ) : registerPtrDataDirection(&DDXn), registerPtrOutput(&PORTXn), registerPtrInput(&PINXn)  {
+MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& PORTXn, volatile uint8_t& PINXn, uint8_t bitPosition[4] ) : 
+  ptrDataDirectionRegister_(&DDXn), 
+  ptrOutputRegister_(&PORTXn), 
+  ptrInputRegister_(&PINXn) {
 
-  for (uint8_t i = 0; i < 4; i++)
-  {
-    bit[i] = bitPosition[i];
+  for (uint8_t i = 0; i < 4; i++) {
+
+    bit_[i] = bitPosition[i];
   }
 }
 
@@ -48,7 +51,7 @@ bool MyButtonMatrix2x2 ::getButtonStatus(uint8_t button) {
   uint8_t live[2] {0,0};
 
   uint8_t count = 0;
-  for (uint8_t i = 0; i < maxBtn; i++)
+  for (uint8_t i = 0; i < BTN_MAX_; i++)
   {
     if (i == sense || i == ground) {
 
@@ -58,14 +61,12 @@ bool MyButtonMatrix2x2 ::getButtonStatus(uint8_t button) {
     }
   }
 
-  setGpioConfig(inputPullUp, *registerPtrDataDirection, *registerPtrOutput, bit[sense]);
-  setGpioConfig(outputSink, *registerPtrDataDirection, *registerPtrOutput, bit[ground]);
-  setGpioConfig(outputSource, *registerPtrDataDirection, *registerPtrOutput, bit[live[0]]);
-  setGpioConfig(outputSource, *registerPtrDataDirection, *registerPtrOutput, bit[live[1]]);
+  setGpioConfig(INPUT_PULLUP, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[sense]);
+  setGpioConfig(OUTPUT_SINK, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[ground]);
+  setGpioConfig(OUTPUT_SOURCE, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[live[0]]);
+  setGpioConfig(OUTPUT_SOURCE, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[live[1]]);
   
-  nop();
-
+  execNop();
   
-  return getBit(*registerPtrInput, bit[sense])? false : true;
-
+  return getBit(*ptrInputRegister_, bit_[sense])? false : true;
 }

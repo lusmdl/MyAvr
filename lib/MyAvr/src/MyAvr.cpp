@@ -21,11 +21,9 @@
  * bool bitValue = myController.getBit(myRegister, 3);
  * // The value of bitValue will be true (1) as the bit at position 3 is set in myRegister
  */
-bool MyController::getBit(volatile uint8_t &reg, uint8_t bit)
-{
+bool MyController::getBit(volatile uint8_t &reg, uint8_t bit) {
+
   return ((reg & (1 << bit)) != 0);
-
-
 }
 
 
@@ -46,12 +44,12 @@ bool MyController::getBit(volatile uint8_t &reg, uint8_t bit)
  * myController.setBit(myRegister, 2, true);
  */
 void MyController::setBit(volatile uint8_t &reg, uint8_t bit, bool value) {
-  if (value)
-  {
+
+  if (value) {
+
     reg |= (1 << bit); // set the bit to 1
   }
-  else
-  {
+  else {
     reg &= ~(1 << bit); // set the bit to 0
   }
 }
@@ -75,7 +73,6 @@ void MyController::setBit(volatile uint8_t &reg, uint8_t bit, bool value) {
 void MyController::clearBit(volatile uint8_t &reg, uint8_t bit) {
   
   reg &= ~(1 << bit); // set the bit to 0
-  
 }
 
 
@@ -100,12 +97,13 @@ void MyController::clearBit(volatile uint8_t &reg, uint8_t bit) {
  * // After this call, myRegister will have the bit at position 1 set to 1
  */
 void MyController::setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value) {
-  if (value)
-  {
+
+  if (value) {
+
     reg |= bitMask; // set the bit to 1
-  }
-  else
-  {
+  } 
+  else {
+
     reg &= ~bitMask; // set the bit to 0
   }
 }
@@ -132,7 +130,6 @@ void MyController::setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value
 void MyController::clearBitMask(volatile uint8_t &reg, uint8_t bitMask) {
 
   reg &= ~bitMask; // set the bit to 0
-  
 }
 
 
@@ -152,40 +149,46 @@ void MyController::clearBitMask(volatile uint8_t &reg, uint8_t bitMask) {
  * MyController myController;
  * myController.setGpioConfig(inputPullUp, DDRA, PORTA, 5);
  */
-void MyController ::setGpioConfig(gpioMode mode, volatile uint8_t &DDxn, volatile uint8_t &PORTxn, uint8_t bit)
+void MyController ::setGpioConfig(enum_gpiomodes mode, volatile uint8_t &DDxn, volatile uint8_t &PORTxn, uint8_t bit)
 {
 
-  switch (mode)
-  {
-  case inputTriState1:
-    setBit(DDxn, bit, 0);
-    setBit(PORTxn, bit, 0);
-    break;
+  switch (mode) {
 
-  case inputPullUp:
-    setBit(DDxn, bit, 0);
-    setBit(PORTxn, bit, 1);
-    setBit(MCUCR, PUD, 0);
-    break;
+    case INPUT_TRI_STATE_1:
 
-  case inputTriState2:
-    setBit(DDxn, bit, 0);
-    setBit(PORTxn, bit, 1);
-    setBit(MCUCR, PUD, 1);
-    break;
+      setBit(DDxn, bit, 0);
+      setBit(PORTxn, bit, 0);
+      break;
 
-  case outputSink:
-    setBit(DDxn, bit, 1);
-    setBit(PORTxn, bit, 0);
-    break;
+    case INPUT_PULLUP:
 
-  case outputSource:
-    setBit(DDxn, bit, 1);
-    setBit(PORTxn, bit, 1);
-    break;
+      setBit(DDxn, bit, 0);
+      setBit(PORTxn, bit, 1);
+      setBit(MCUCR, PUD, 0);
+      break;
 
-  default:
-    break;
+    case INPUT_TRI_STATE_2:
+
+      setBit(DDxn, bit, 0);
+      setBit(PORTxn, bit, 1);
+      setBit(MCUCR, PUD, 1);
+      break;
+
+    case OUTPUT_SINK:
+
+      setBit(DDxn, bit, 1);
+      setBit(PORTxn, bit, 0);
+      break;
+
+    case OUTPUT_SOURCE:
+
+      setBit(DDxn, bit, 1);
+      setBit(PORTxn, bit, 1);
+      break;
+
+    default:
+
+      break;
   }
 }
 
@@ -200,30 +203,35 @@ void MyController ::setGpioConfig(gpioMode mode, volatile uint8_t &DDxn, volatil
  * MyController myController;
  * myController.delayMs(1000);
  */
-void MyController::delayMs(uint32_t ms) {
+void MyController::execDelayMs(uint32_t ms) {
+
     // Anzahl der Mikrosekunden basierend auf den Millisekunden berechnen
+
     const uint32_t sizeOf32Bit = 0xFFFFFFFF;
     uint32_t us {sizeOf32Bit};
 
     // Prüfe ob zu viele millisekunden ausgewählt wurden
+
     uint32_t maxMillis = sizeOf32Bit/1000;
-    if (ms < (maxMillis) ){
+    if (ms < (maxMillis)) {
 
       us = ms * 1000;
-      
     } 
 
     // Anzahl der 65535-Mikrosekunden-Pakete berechnen
+
     const uint16_t sizeOf16Bit {0xFFFF};
     uint8_t numberOfLoops = (us / sizeOf16Bit);
 
     // Verzögere für jedes 65535-Mikrosekunden-Paket
+
     for (uint8_t loops = 0; loops < numberOfLoops; loops++) {
-      delayUs(sizeOf16Bit);
+      
+      execDelayUs(sizeOf16Bit);
     }
 
     // Verzögere den verbleibenden Teil
-    delayUs(us % sizeOf16Bit);
+    execDelayUs(us % sizeOf16Bit);
 }
 
 
@@ -237,10 +245,12 @@ void MyController::delayMs(uint32_t ms) {
  * MyController myCtrl;
  * myCtrl.delayUs(100); // Delay execution for 100 microseconds
  */
-void MyController::delayUs(uint16_t us) {
+void MyController::execDelayUs(uint16_t us) {
+
     // Anzahl der Iterationen berechnen, basierend auf der CPU-Frequenz
+
     const uint8_t numberOfClkPerNOP {8};
-    uint32_t iterations = ((cpuFreq / 1000000UL) * us / numberOfClkPerNOP);
+    uint32_t iterations = ((cpuFreq_ / 1000000) * us / numberOfClkPerNOP);
 
     // Delay durchführen
     asm volatile (
@@ -269,7 +279,7 @@ void MyController::delayUs(uint16_t us) {
  * MyController myController;
  * myController.nop();
  */
-void MyController ::nop()
-{
+void MyController ::execNop() {
+
   asm volatile("nop");
 }

@@ -18,7 +18,7 @@
  */
 MyAtmega328p ::MyAtmega328p(unsigned long freq) {
 
-  cpuFreq = freq;
+  cpuFreq_ = freq;
 }
 
 
@@ -35,12 +35,14 @@ MyAtmega328p ::MyAtmega328p(unsigned long freq) {
  * MyAtmega328p myController;
  * myController.writeToEEPROM(0, "Hello World");
  */
-
 void MyAtmega328p ::writeToEEPROM(uint16_t address, const String& str) {
-  // Speicherzugriff einschränken auf den EEPROM-Bereich
-  if (address >= 0 && address < E2END) {
+
+
+  if (address >= 0 && address < E2END) { // Speicherzugriff einschränken auf den EEPROM-Bereich
+
     size_t length = str.length();
     if (length > E2END - address) {
+
       length = E2END - address;
     }
     eeprom_write_block(reinterpret_cast<const void*>(str.c_str()), reinterpret_cast<void*>(address), length);
@@ -67,10 +69,12 @@ void MyAtmega328p ::writeToEEPROM(uint16_t address, const String& str) {
  * myController.readFromEEPROM(100, myString, 20);
  */
 void MyAtmega328p ::readFromEEPROM(uint16_t address, String& str, size_t bufferSize) {
-  // Überprüfen, ob Adresse innerhalb des EEPROM-Bereichs liegt
-  if (address >= 0 && address < E2END) {
+
+  if (address >= 0 && address < E2END) { // Überprüfen, ob Adresse innerhalb des EEPROM-Bereichs liegt
+
     size_t length = E2END - address;
     if (length > bufferSize) {
+
       length = bufferSize;
     }
     char* buffer = new char[length + 1];
@@ -96,8 +100,9 @@ void MyAtmega328p ::readFromEEPROM(uint16_t address, String& str, size_t bufferS
  * myController.writeToEEPROM(0x10, 0xAB);
  */
 void MyAtmega328p ::writeToEEPROM(uint16_t address, uint8_t value) {
-  // Speicher-Zugriff einschränken auf Adressebereich des EEPROM
-  if (address >= 0 && address < E2END) {
+
+  if (address >= 0 && address < E2END) { // Speicher-Zugriff einschränken auf Adressebereich des EEPROM
+
     eeprom_write_byte((uint8_t*)address, value);
   }
 }
@@ -121,8 +126,10 @@ void MyAtmega328p ::writeToEEPROM(uint16_t address, uint8_t value) {
  * Serial.print(data); // Output: Value at address 100 in EEPROM
  */
 uint8_t MyAtmega328p ::readFromEEPROM(uint16_t address) {
-  // Überprüfen, ob Adresse innerhalb des EEPROM-Bereichs liegt
-  if (address >= 0 && address < E2END) {
+
+  
+  if (address >= 0 && address < E2END) { // Überprüfen, ob Adresse innerhalb des EEPROM-Bereichs liegt
+
     return eeprom_read_byte((uint8_t*)address);
   }
   
@@ -140,8 +147,8 @@ uint8_t MyAtmega328p ::readFromEEPROM(uint16_t address) {
  * MyAtmega328p myDevice;
  * myDevice.test(1000); // Turn the LED on and off with a delay of 1000ms
  */
-void MyAtmega328p ::test(uint16_t delay)
-{
+void MyAtmega328p ::execTest(uint16_t delay) {
+
   // Den digitalen Pin als Ausgang konfigurieren
   // DDRB |= (1 << DDB5);
   setBit(DDRB, DDB5, true);
@@ -149,12 +156,12 @@ void MyAtmega328p ::test(uint16_t delay)
   // Die LED einschalten
   // PORTB |= (1 << PORTB5);
   setBit(PORTB, DDB5, true);
-  delayMs(delay); // Eine Sekunde warten
+  execDelayMs(delay); // Eine Sekunde warten
 
   // Die LED ausschalten
   // PORTB &= ~(1 << PORTB5);
   setBit(PORTB, DDB5, false);
-  delayMs(delay); // Eine Sekunde warten
+  execDelayMs(delay); // Eine Sekunde warten
 }
 
 
@@ -172,23 +179,24 @@ void MyAtmega328p ::test(uint16_t delay)
  * MyAtmega328p myDevice;
  * myDevice.initUart(9600);
  */
-void MyAtmega328p ::initUart(uint32_t baudrate)
-{
+void MyAtmega328p ::initUart(uint32_t baudrate) {
 
-  uint16_t ubrr = cpuFreq / (16 * baudrate) - 1;
+  uint16_t ubrr = cpuFreq_ / (16 * baudrate) - 1;
 
   // Set baud rate
+
   UBRR0H = (uint8_t)(ubrr >> 8);
   UBRR0L = (uint8_t)ubrr;
 
   // Enable receiver and transmitter
+
   UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
   // Set frame format: 8data, 2stop bit
+
   // UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
   UCSR0C = (1 << USBS0) | (3 << UCSZ00);
 
-  // Hello World Nachricht
   printUart("\nHello World!\n");
 }
 
@@ -206,11 +214,10 @@ void MyAtmega328p ::initUart(uint32_t baudrate)
  * MyAtmega328p myAtmega;
  * myAtmega.putcharUart('A');
  */
-void MyAtmega328p ::putcharUart(char c)
-{
-  while (!(UCSR0A & (1 << UDRE0)))
-    ;
-  UDR0 = c;
+void MyAtmega328p ::sendCharUart(char c) {
+
+  while (!(UCSR0A & (1 << UDRE0)));
+    UDR0 = c;
 }
 
 
@@ -226,12 +233,12 @@ void MyAtmega328p ::putcharUart(char c)
  * @example 
  * MyAtmega328p.atmega328p.printUart("Hello, world!");
  */
-void MyAtmega328p ::printUart(const char *str)
-{
+void MyAtmega328p ::printUart(const char *str) {
+
   const size_t len = strlen(str);
-  for (size_t i = 0; i < len; i++)
-  {
-    putcharUart(str[i]);
+  for (size_t i = 0; i < len; i++) {
+
+    sendCharUart(str[i]);
   }
 }
 
@@ -249,12 +256,12 @@ void MyAtmega328p ::printUart(const char *str)
  * MyAtmega328p atmegaDevice;
  * atmegaDevice.printUart("Hello, World!");
  */
-void MyAtmega328p::printUart(const String &str)
-{
+void MyAtmega328p::printUart(const String &str) {
+
   const size_t len = str.length();
-  for (size_t i = 0; i < len; i++)
-  {
-    putcharUart(str.charAt(i));
+  for (size_t i = 0; i < len; i++) {
+
+    sendCharUart(str.charAt(i));
   }
 }
 
@@ -273,7 +280,7 @@ void MyAtmega328p::printUart(const String &str)
  * @example
  * MyAtmega328p.setTC0Config(MyAtmega328p::tcModes::ctc, MyAtmega328p::tcPrescalers::prescalerValue, 100);
  */
-void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, uint8_t topValue)
+void MyAtmega328p ::setTC0Config(enum_tcmodes mode, enum_tcprescalers prescaler, uint8_t topValue)
 {
 
   /*
@@ -287,40 +294,39 @@ void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, uint8_t t
   | 5     | 1     | 0     | 1     | PWM, Phase Correct              | OCRA  | TOP BOTTOM
   | 7     | 1     | 1     | 1     | Fast PWM                        | OCRA  | BOTTOM TOP
   */
-  switch (mode)
-  {
-  case ctc:
+  switch (mode) {
 
-    // ctc modus einrichten
-    setBit(TCCR0A, WGM00, 0);
-    setBit(TCCR0A, WGM01, 1);
-    setBit(TCCR0B, WGM02, 0);
+    case CTC:
 
-    // prescaler
-    auto N = setTC01Prescaler(prescaler, TCCR0B, CS02, CS01, CS00);
+      // ctc modus einrichten
+
+      setBit(TCCR0A, WGM00, 0);
+      setBit(TCCR0A, WGM01, 1);
+      setBit(TCCR0B, WGM02, 0);
+
+      // prescaler
+      auto N = setTC01Prescaler(prescaler, TCCR0B, CS02, CS01, CS00);
 
 
-    // Setze den Vergleichswert für den CTC-Modus
-    /*
-    don't use this calculation. Do this in the main code instead!
-    auto clkPerMillisekond { ( cpuFreq / N ) / 1000 };
-    OCR0A = ( ( clkPerMillisekond * topTime ) - 1 );
+      // Setze den Vergleichswert für den CTC-Modus
+      /*
+      don't use this calculation. Do this in the main code instead!
+      auto clkPerMillisekond { ( cpuFreq / N ) / 1000 };
+      OCR0A = ( ( clkPerMillisekond * topTime ) - 1 );
+      */
 
-    */
-    OCR0A = topValue;
+      OCR0A = topValue;
 
-    // interrupt aktivieren
-    setBit(TIMSK0, OCIE0A);
-    sei();
+      // interrupt aktivieren
 
-    
+      setBit(TIMSK0, OCIE0A);
+      sei();
 
-    break;
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
-
 }
 
 
@@ -344,8 +350,7 @@ void MyAtmega328p ::setTC0Config(tcModes mode, tcPrescalers prescaler, uint8_t t
  * uint32_t prescalerValue = setTC01Prescaler(clk64, prescalerReg, 1, 2, 0);
  * // This sets the prescaler to 64 and updates the register accordingly
  */
-uint32_t MyAtmega328p ::setTC01Prescaler(tcPrescalers prescaler, volatile uint8_t &reg, uint8_t bit02, uint8_t bit01, uint8_t bit00)
-{
+uint32_t MyAtmega328p ::setTC01Prescaler(enum_tcprescalers prescaler, volatile uint8_t &reg, uint8_t bit02, uint8_t bit01, uint8_t bit00) {
 
   /*
   Prescaler Tabelle
@@ -360,60 +365,72 @@ uint32_t MyAtmega328p ::setTC01Prescaler(tcPrescalers prescaler, volatile uint8_
   | 1 | 1 | 0 | External clock source on T0 pin. Clock on falling edge.
   | 1 | 1 | 1 | External clock source on T0 pin. Clock on rising edge.
   */
-  switch (prescaler)
-  {
-  case clk1:
-    setBit(reg, bit00, true);
-    setBit(reg, bit01, false);
-    setBit(reg, bit02, false);
-    return 1;
-    break;
+  switch (prescaler) {
 
-  case clk8:
-    setBit(reg, bit00, false);
-    setBit(reg, bit01, true);
-    setBit(reg, bit02, false);
-    return 8;
-    break;
+    case CLK_1:
 
-  case clk64:
-    setBit(reg, bit00, true);
-    setBit(reg, bit01, true);
-    setBit(reg, bit02, false);
-    return 64;
-    break;
+      setBit(reg, bit00, true);
+      setBit(reg, bit01, false);
+      setBit(reg, bit02, false);
+      return 1;
+      break;
 
-  case clk256:
-    setBit(reg, bit00, false);
-    setBit(reg, bit01, false);
-    setBit(reg, bit02, true);
-    return 256;
-    break;
+    case CLK_8:
 
-  case clk1024:
-    setBit(reg, bit00, true);
-    setBit(reg, bit01, false);
-    setBit(reg, bit02, true);
-    return 1024;
-    break;
+      setBit(reg, bit00, false);
+      setBit(reg, bit01, true);
+      setBit(reg, bit02, false);
 
-  case extClkSourceFallingEdge:
-    setBit(reg, bit00, false);
-    setBit(reg, bit01, true);
-    setBit(reg, bit02, true);
-    break;
+      return 8;
+      break;
 
-  case extClkSourceRisingEdge:
-    setBit(reg, bit00, true);
-    setBit(reg, bit01, true);
-    setBit(reg, bit02, true);
-    break;
+    case CLK_64:
 
-  default:
-    setBit(reg, bit00, false);
-    setBit(reg, bit01, false);
-    setBit(reg, bit02, false);
-    break;
+      setBit(reg, bit00, true);
+      setBit(reg, bit01, true);
+      setBit(reg, bit02, false);
+
+      return 64;
+      break;
+
+    case CLK_256:
+
+      setBit(reg, bit00, false);
+      setBit(reg, bit01, false);
+      setBit(reg, bit02, true);
+
+      return 256;
+      break;
+
+    case CLK_1024:
+
+      setBit(reg, bit00, true);
+      setBit(reg, bit01, false);
+      setBit(reg, bit02, true);
+
+      return 1024;
+      break;
+
+    case EXT_CLK_SOURCE_FALLING_EDGE:
+      setBit(reg, bit00, false);
+      setBit(reg, bit01, true);
+      setBit(reg, bit02, true);
+
+      break;
+
+    case EXT_CLK_SOURCE_RISING_EDGE:
+      setBit(reg, bit00, true);
+      setBit(reg, bit01, true);
+      setBit(reg, bit02, true);
+
+      break;
+
+    default:
+      setBit(reg, bit00, false);
+      setBit(reg, bit01, false);
+      setBit(reg, bit02, false);
+
+      break;
   }
 
   return 0;
@@ -441,7 +458,7 @@ uint32_t MyAtmega328p ::setTC01Prescaler(tcPrescalers prescaler, volatile uint8_
  * MyAtmega328p avr;
  * avr.sleep(powerDown, 0x01, false);
  */
-void MyAtmega328p::sleep(sleepModes sleepMode, uint8_t powerReductionBits, bool enableBODSleep) {
+void MyAtmega328p::execSleep(enum_sleepmodes sleepMode, uint8_t powerReductionBits, bool enableBODSleep) {
 
   // Disable interrupts
   cli();
@@ -451,46 +468,72 @@ void MyAtmega328p::sleep(sleepModes sleepMode, uint8_t powerReductionBits, bool 
 
   // Set the requested sleep mode
   switch(sleepMode) {
-    case idle:
+
+    case IDLE:
+
       clearBitMask(SMCR, BITMASK(SM0) | BITMASK(SM1) | BITMASK(SM2));
+
       break;
-    case adcNoiseReduction:
+
+    case ADC_NOISE_REDUCTION:
+
       setBitMask(SMCR, BITMASK(SM0));
       clearBitMask(SMCR, BITMASK(SM1) | BITMASK(SM2));
+
       break;
-    case powerDown:
+
+    case POWER_DOWN:
+
       setBitMask(SMCR, BITMASK(SM1));
       clearBitMask(SMCR, BITMASK(SM2) | BITMASK(SM0)); 
+
       break;
-    case powerSave:
+
+    case POWER_SAVE:
+
       setBitMask(SMCR, BITMASK(SM0) | BITMASK(SM1));
       clearBitMask(SMCR, BITMASK(SM2));
+
       break;
-    case Standby:
+
+    case STANDBY:
+
       // only recommend for use with external crystals or resonators
+
       clearBitMask(SMCR, BITMASK(SM0));
       setBitMask(SMCR, BITMASK(SM1) | BITMASK(SM2));
+
       break;
-    case extendedStandby:
+
+    case EXTENDED_STANDBY:
+
       // only recommend for use with external crystals or resonators
+
       setBitMask(SMCR, BITMASK(SM0) | BITMASK(SM1) | BITMASK(SM2) ); 
+
       break;
+
     default:
-      // Invalid sleep mode, do nothing
+
+      // Invalid sleep mode, return imidiately
+
       return;
   }
 
   // Set the power reduction bits
   PRR |= powerReductionBits;
 
-  // Enable BODS bit and set BODS to disable BOD in sleep mode if enableBODSleep is true
   if (enableBODSleep) {
+
+    // Enable BODS bit and set BODS to disable BOD in sleep mode if enableBODSleep is true
+
     setBit(MCUCR, BODS);
     setBit(MCUCR, BODSE);
     clearBit(MCUCR, BODSE);
   }
 
   // Delay for three clock cycles
+
   asm volatile("nop");
   asm volatile("nop");
   asm volatile("nop");
@@ -504,20 +547,21 @@ void MyAtmega328p::sleep(sleepModes sleepMode, uint8_t powerReductionBits, bool 
   // Enter sleep mode
   asm volatile("sleep");
 
-  /*
-  Execution will resume here after waking up
-  ...
-  */
+  // Execution will resume here after waking up
+  //...
 
   // Clear the power reduction bits
   PRR &= ~powerReductionBits;
 
-  // Re-enable BOD after sleep mode if enableBODSleep is true (optional)
   if (enableBODSleep) {
+
+    // Re-enable BOD after sleep mode if enableBODSleep is true (optional)
+
     clearBit(MCUCR, BODS);
   }
 
   // Disable sleep mode
+  
   setBit(MCUCR, SE, false);
   clearBitMask(SMCR, BITMASK(SM0) | BITMASK(SM1) | BITMASK(SM2));
 }

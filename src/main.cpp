@@ -62,7 +62,7 @@ MyAtmega328p myAVR(F_CPU);
 int main(void)
 {
   
-  myAVR.test(100);
+  myAVR.execTest(100);
 
   myAVR.initUart(9600);
 
@@ -75,7 +75,7 @@ int main(void)
   125.000 / 1000 = 125
   125 -1 = 124 (compare value if the quarz is perfect in time)
   */
-  myAVR.setTC0Config(ctc,clk64,124);
+  myAVR.setTC0Config(CTC,CLK_64,124);
 
 
   while (1)
@@ -84,7 +84,7 @@ int main(void)
     
     myAVR.printUart("\n----------\nBEGIN LOOP\n");
     myAVR.printUart("millis:\t" + String(millisekunden) + "\nsec:\t" + String(sekunde) + "\nminute:\t" + String(minute) + "\nhour:\t" + String(stunde) + "\n");
-    myAVR.delayMs(1000);
+    myAVR.execDelayMs(1000);
   }
 
  

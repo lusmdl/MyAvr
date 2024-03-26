@@ -17,7 +17,12 @@
  * @example 
  * MyButton button(PINXn, 3, true);
  */
-MyButton ::MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertButton) : registerPtr(&PINXn), bit(bitPosition), pushed(false), numbersGetPushed(0), paraInvert(invertButton) {}
+MyButton ::MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertButton) : 
+  ptrRegister_(&PINXn), 
+  bit_(bitPosition), 
+  pushed_(false), 
+  numberGetPushed_(0), 
+  enableInvert_(invertButton) {}
 
 
 /**
@@ -45,25 +50,28 @@ MyButton ::MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertBut
 bool MyButton ::getStatus() {
 
   /* Führe eine NOP-Operation für die Synchronisation aus */
-  nop();
+  execNop();
 
-  bool buttonStatus = getBit(*registerPtr, bit);
-
+  bool buttonStatus = getBit(*ptrRegister_, bit_);
   
-  if (paraInvert) {
-    /*
-    if the parameter is set, swap the bit
-    this is usefull if you use pullup resistors
-    */
+  if (enableInvert_) {
+
+    // if the parameter is set, swap the bit
+    // this is usefull if you use pullup resistors
+
     buttonStatus = !buttonStatus;
   }
 
   if (buttonStatus) {
-    ++numbersGetPushed;
-    pushed = true;
-  } else {
-    pushed = false;
+
+    ++numberGetPushed_;
+    pushed_ = true;
+  } 
+  else {
+
+    pushed_ = false;
   }
+
   return buttonStatus;
 }
 
@@ -83,8 +91,11 @@ bool MyButton ::getStatus() {
  * // This sets the button status with 3 pushed numbers
  */
 void MyButton ::setStatus(uint32_t newValue) {
-  numbersGetPushed = newValue;
+
+  numberGetPushed_ = newValue;
+  
   if (newValue == 0) {
-    pushed = false;
+
+    pushed_ = false;
   }
 }

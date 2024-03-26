@@ -17,78 +17,116 @@
 
 #include <WString.h>
 
+// OOP
+#include <MyBehavioralDesignPatterns.hpp>
+
 
 // ENUMS
 
-/*
-Konfiguration der General Porpus IOs
-Legt fest, ob es sich um einen Eingang oder Ausgang handelt
-*/
-enum gpioMode {
 
-    inputTriState1,
-    inputPullUp,
-    inputTriState2,
-    outputSink,
-    outputSource
+/**
+ * 
+ * @brief Konfiguration der General Porpus IOs
+ * Legt fest, ob es sich um einen Eingang oder Ausgang handelt
+ * 
+ * 
+ * 
+*/
+enum enum_gpiomodes {
+
+    INPUT_TRI_STATE_1,
+    INPUT_PULLUP,
+    INPUT_TRI_STATE_2,
+    OUTPUT_SINK,
+    OUTPUT_SOURCE
 };
 
-/*
-Konfigurationsmodi für Timer
+/**
+ * @brief Konfigurationsmodi für Timer
+ * 
+ * 
 */
-enum tcModes {
+enum enum_tcmodes {
 
-    normal,
-    pwmPhaseCorrect,
-    ctc,
-    fastPwm,
-    pwmPhaseCorrectCompareA,
-    fastPwmCompareA
+    NORMAL,
+    PWM_PHASE_CORRECT,
+    CTC,
+    FAST_PWM,
+    PWM_PHASE_CORRECT_COMPARE_A,
+    FAST_PWM_COMPARE_A
 };
 
-/*
-Vorteiler für Takt
+/**
+ * 
+ * @brief Timer/Counter Prescalers
+ * 
+ * 
+ * @note
+ * NO_CLOCK_SOURCE,
+    CLK_1,
+    CLK_8,
+    CLK_32,
+    CLK_64,
+    CLK_128,
+    CLK_256,
+    CLK_1024,
+    EXT_CLK_SOURCE_RISING_EDGE,
+    EXT_CLK_SOURCE_FALLING_EDGE
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
 */
-enum tcPrescalers {
+enum enum_tcprescalers {
 
-    noClockSource,
-    clk1,
-    clk8,
-    clk32,
-    clk64,
-    clk128,
-    clk256,
-    clk1024,
-    extClkSourceRisingEdge,
-    extClkSourceFallingEdge
+    NO_CLOCK_SOURCE,
+    CLK_1,
+    CLK_8,
+    CLK_32,
+    CLK_64,
+    CLK_128,
+    CLK_256,
+    CLK_1024,
+    EXT_CLK_SOURCE_RISING_EDGE,
+    EXT_CLK_SOURCE_FALLING_EDGE
 };
 
-/*
-Sleep Modes
-@note
-Idle,  
-ADC Noise Reduction, 
-Power-down,
-Power-save, 
-Standby, 
-Extended Standby
+/**
+ * @brief Sleep Modes
+ * 
+ * 
+ * @note
+ * IDLE,
+    ADC_NOISE_REDUCTION,
+    POWER_DOWN,
+    POWER_SAVE,
+    STANDBY,
+    EXTENDED_STANDBY
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
 */
-enum sleepModes {
+enum enum_sleepmodes {
 
     // data
 
-    idle,
-    adcNoiseReduction,
-    powerDown,
-    powerSave,
-    Standby,
-    extendedStandby
+    IDLE,
+    ADC_NOISE_REDUCTION,
+    POWER_DOWN,
+    POWER_SAVE,
+    STANDBY,
+    EXTENDED_STANDBY
 
 };
 
 
 // CLASSES
-
 
 // BASIC CLASSES
 
@@ -101,33 +139,31 @@ class MyController {
 
         // DATA 
 
-        unsigned long cpuFreq; //  CPU Frequenz - Atmega328p standard = 8 Mhz -> 8000000UL
-
-
-        // METHODS
-
+        //  CPU Frequenz - Atmega328p standard = 8 Mhz -> 8000000
+        unsigned long cpuFreq_; 
 
     public:
-
-        // METHODS
-
-        void nop();
-        void delayUs(uint16_t us);
-        void delayMs(uint32_t ms);
-
 
         // GETTER
 
         bool getBit(volatile uint8_t &reg, uint8_t bit);
-
-
+        
         // SETTER
 
         void setBit(volatile uint8_t &reg, uint8_t bit, bool value = true);
-        void clearBit(volatile uint8_t &reg, uint8_t bit);
         void setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value = true);
-        void clearBitMask(volatile uint8_t &reg, uint8_t bitMask);
-        void setGpioConfig(gpioMode mode, volatile uint8_t &DDxn, volatile uint8_t &PORTxn, uint8_t bit);
+        void setGpioConfig(enum_gpiomodes mode, volatile uint8_t &ddxn, volatile uint8_t &portxn, uint8_t bit);
+        
+        // EXECUTIONS
+
+        void execNop();
+        void execDelayUs(uint16_t us);
+        void execDelayMs(uint32_t ms);
+
+        // CLEAR
+
+        void clearBit(volatile uint8_t &reg, uint8_t bit);
+        void clearBitMask(volatile uint8_t &reg, uint8_t bit_mask);
 };
 
 
