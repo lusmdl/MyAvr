@@ -17,7 +17,7 @@
 
 #include <WString.h>
 
-// OOP
+// Design Patterns
 #include <MyBehavioralDesignPatterns.hpp>
 
 
@@ -125,6 +125,46 @@ enum enum_sleepmodes {
 
 };
 
+// Plain Old Data
+//
+// Für Datenübertragung zwischen Softwarekomponenten
+// 
+// Regeln:
+// - Einfache Datenstrukturen
+// - Nur Daten, keine Methoden
+// - kompakt und leichtgewichtig
+// - portabel
+// - unveränderlich
+
+
+struct pod_gpioregister {
+    
+    volatile uint8_t *ptrDataDirection {nullptr}; // Input/Output direction
+    volatile uint8_t *ptrPort {nullptr};          // Output values
+    volatile uint8_t *ptrPin {nullptr};           // Input values
+};
+
+
+struct pod_buttonstatus {
+
+    // button status (PUSHED or NOT PUSHED)
+    bool pushed {false};
+
+    // button status at the last time
+    bool flagOldPush {false};
+
+    bool risingEdge {false};
+
+    bool fallingEdge {false};
+    
+    // number of pushes since reset
+    uint32_t numberGetPushed {0};
+
+    // invert the HIGH Signal (usefull if pullup is in use)
+    bool enableInvert {false};
+};
+
+
 
 // CLASSES
 
@@ -140,7 +180,7 @@ class MyController {
         // DATA 
 
         //  CPU Frequenz - Atmega328p standard = 8 Mhz -> 8000000
-        unsigned long cpuFreq_; 
+        //unsigned long cpuFreq_; // handle everything with F_CPU Makro
 
     public:
 
@@ -151,7 +191,7 @@ class MyController {
         // SETTER
 
         void setBit(volatile uint8_t &reg, uint8_t bit, bool value = true);
-        void setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value = true);
+        void setBitMask(volatile uint8_t &reg, uint8_t bit_mask, bool value = true);
         void setGpioConfig(enum_gpiomodes mode, volatile uint8_t &ddxn, volatile uint8_t &portxn, uint8_t bit);
         
         // EXECUTIONS
@@ -172,6 +212,7 @@ class MyController {
 // ATMEGAs
 
 // ATMEGA328p
+
 #include "Atmega328pISR.h"
 #include "MyAtmega328p.hpp"
 

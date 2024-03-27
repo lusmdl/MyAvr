@@ -7,22 +7,38 @@
  * Initializes the member variables of the class.
  * 
  * @param PINXn A reference to the register containing the status of the button.
- * @param bitPosition The position of the bit in the register representing the button status.
- * @param invertButton Indicates if the button input should be inverted.
+ * @param bit_position The position of the bit in the register representing the button status.
+ * @param invert Indicates if the button input should be inverted.
  * 
  * @warning This method may have unforeseen consequences and could be insecure at certain points.
  * 
  * @note Make sure to properly configure the parameters to avoid unexpected behaviors.
  * 
  * @example 
- * MyButton button(PINXn, 3, true);
+ * MyButton button(pinxn, 3, true);
  */
-MyButton ::MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertButton) : 
-  ptrRegister_(&PINXn), 
-  bit_(bitPosition), 
-  pushed_(false), 
-  numberGetPushed_(0), 
-  enableInvert_(invertButton) {}
+MyButton ::MyButton(volatile uint8_t &pinxn, uint8_t bit_position, bool invert) : 
+  //ptrRegister_(&pinxn), 
+  reg_{nullptr, nullptr, &pinxn},
+  bit_(bit_position), 
+  //pushed_(false), 
+  //numberGetPushed_(0), 
+  //enableInvert_(invert) 
+  button_{false, false, false, false, 0, invert} {}
+
+
+/**
+ * @brief Constructor of the class MyButton
+ * Initializes the member variables of the class.
+ * 
+ * 
+ * 
+ * 
+*/
+MyButton ::MyButton(pod_gpioregister &reg, uint8_t bit_position, bool invert) : 
+  reg_(reg),
+  bit_(bit_position),
+  button_{false, false, false, false, 0, invert} {}
 
 
 /**
@@ -35,51 +51,81 @@ MyButton ::MyButton(volatile uint8_t& PINXn, uint8_t bitPosition, bool invertBut
  * @param numbersGetPushed Number of times the button has been pressed
  * @param pushed Flag indicating if the button is currently pressed
  * 
- * @return The status of the button (true if the button is pressed, false otherwise)
+ * @return The status of the button contained in an POD
  * 
  * @warning This method may have unexpected behavior and is considered unsafe in certain scenarios.
  * 
  * @note Use the parameter paraInvert carefully to handle inverted button status.
  * 
  * @example 
- * bool buttonStatus = getStatus(&register, 3, true, numbersPressed, buttonPressed);
- * if (buttonStatus) {
+ * bool buttonPushed = getStatus(&register, 3, true, numbersPressed, buttonPressed);
+ * if (buttonPushed) {
  *    // Do something if the button is pressed
  * }
  */
-bool MyButton ::getStatus() {
+pod_buttonstatus MyButton ::getStatus() {
 
-  /* Führe eine NOP-Operation für die Synchronisation aus */
+  // this method calculate all data based on the register value
+  // WARNING: do not read the calculated values, always read the actual register value
+
+  // Führe eine NOP-Operation für die Synchronisation aus
   execNop();
 
-  bool buttonStatus = getBit(*ptrRegister_, bit_);
+  // reset edge flags
   
-  if (enableInvert_) {
+  button_.fallingEdge = false;
+  button_.risingEdge = false;
+
+  // acutal read register data, use this everytime in this method
+  bool buttonPushed {false};
+  
+  if (button_.enableInvert) {
 
     // if the parameter is set, swap the bit
     // this is usefull if you use pullup resistors
 
-    buttonStatus = !buttonStatus;
+    buttonPushed = getBit(*reg_.ptrPin, bit_) ? false : true;
+  }
+  else {
+
+    buttonPushed = getBit(*reg_.ptrPin, bit_) ? true : false;
   }
 
-  if (buttonStatus) {
+  if (buttonPushed) {
 
-    ++numberGetPushed_;
-    pushed_ = true;
+    button_.pushed = true;
+
+    if (button_.flagOldPush == false) {
+
+      // rising edge
+
+      button_.risingEdge = true;
+      button_.numberGetPushed++;
+    }
   } 
   else {
 
-    pushed_ = false;
+    button_.pushed = false;
+
+    if (button_.flagOldPush == true) {
+
+      // falling edge
+
+      button_.fallingEdge = true;
+    }
   }
 
-  return buttonStatus;
+  // set old flag after
+  button_.flagOldPush = buttonPushed;
+
+  return button_;
 }
 
 
 /**
  * @brief Sets the status of the button.
  * 
- * @param newValue The new value for the amount of button numbers pushed (default value is 0)
+ * @param value_new The new value for the amount of button numbers pushed (default value is 0)
  * 
  * @warning This method may be unsafe in certain scenarios where unexpected behavior could occur.
  * 
@@ -90,12 +136,17 @@ bool MyButton ::getStatus() {
  * myButton.setStatus(3);
  * // This sets the button status with 3 pushed numbers
  */
-void MyButton ::setStatus(uint32_t newValue) {
+void MyButton ::setStatus(uint32_t value_new) {
 
-  numberGetPushed_ = newValue;
+  button_.numberGetPushed = value_new;
   
-  if (newValue == 0) {
+  if (value_new == 0) {
 
-    pushed_ = false;
+    // reset everything if new value is zero
+
+    button_.pushed = false;
+    button_.flagOldPush = false;
+    button_.fallingEdge = false;
+    button_.risingEdge = false;
   }
 }

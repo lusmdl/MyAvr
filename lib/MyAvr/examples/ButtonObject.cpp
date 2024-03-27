@@ -9,28 +9,31 @@
 
 #include <MyAvr.hpp>
 
-MyAtmega328p myAVR(8000000UL);
+MyAtmega328p myAVR;
 
 int main (void) {
 
   // teste den Mikrocontroller
-  myAVR.test(100);
+  myAVR.execTest(100);
 
   // initialisiere die UART
   myAVR.initUart(9600);
 
   // konfiguriere die GPIOs
-  myAVR.setGpioConfig(inputPullUp, DDRD, PORTD, PD3);
+  myAVR.setGpioConfig(INPUT_PULLUP, DDRD, PORTD, PD3);
 
   MyButton btnTest(PIND, PD3, true);
   
   while (1) {
 
-    if (btnTest.getStatus())
-    {
-      /* Wenn der Taster gedrückt wird */
+    // infinity loop
+
+    if (btnTest.getStatus().pushed) {
+
+      // Wenn der Taster gedrückt wird
+
       myAVR.printUart("btnTest pressed!\n");
-      myAVR.delayMs(1000);
+      myAVR.execDelayMs(1000);
     }
 
   }

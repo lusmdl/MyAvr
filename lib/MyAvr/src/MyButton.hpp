@@ -6,6 +6,8 @@
 #include "MyAvr.hpp"
 
 
+
+
 class MyButton : private MyController {
 
     private:
@@ -13,19 +15,22 @@ class MyButton : private MyController {
         // MEMBER
 
         // Zeiger auf das Register des Tasters
-        volatile uint8_t* ptrRegister_;
+        //volatile uint8_t* ptrRegister_;
+        pod_gpioregister reg_;
 
         // Bitposition des Tasters im Register
         uint8_t bit_;
 
         // Tasterstatus (gedrückt oder nicht gedrückt)
-        bool pushed_;
+        //bool pushed_;
         
         // Anzahl der Tasterbetätigungen
-        uint32_t numberGetPushed_;
+        //uint32_t numberGetPushed_;
         
         // invert the HIGH Signal (usefull if pullup is in use)
-        bool enableInvert_;
+        //bool enableInvert_;
+
+        pod_buttonstatus button_;
 
     protected:
 
@@ -34,12 +39,13 @@ class MyButton : private MyController {
 
         // CONSTRUCTOR
         
-        MyButton(volatile uint8_t& pinxn, uint8_t bit_position, bool invert = false);
+        MyButton(volatile uint8_t &pinxn, uint8_t bit_position, bool invert = false);
+        MyButton(pod_gpioregister &reg, uint8_t bit_position, bool invert = false);
 
 
         // GETTER
 
-        bool getStatus();
+        pod_buttonstatus getStatus();
 
 
         // SETTER

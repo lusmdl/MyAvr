@@ -80,7 +80,7 @@ void MyController::clearBit(volatile uint8_t &reg, uint8_t bit) {
  * @brief Sets or clears the bitmask in a specified register based on the given value.
  * 
  * @param reg The register in which the bitmask should be set or cleared.
- * @param bitMask The bitmask to set or clear.
+ * @param bit_mask The bitmask to set or clear.
  * @param value The value specifying whether the bitmask should be set or cleared.
  * 
  * @remarks This method sets the bit to 1 or 0 in the specified register, depending on the value parameter.
@@ -96,15 +96,15 @@ void MyController::clearBit(volatile uint8_t &reg, uint8_t bit) {
  * controller.setBitMask(myRegister, 0b00000010, true);
  * // After this call, myRegister will have the bit at position 1 set to 1
  */
-void MyController::setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value) {
+void MyController::setBitMask(volatile uint8_t &reg, uint8_t bit_mask, bool value) {
 
   if (value) {
 
-    reg |= bitMask; // set the bit to 1
+    reg |= bit_mask; // set the bit to 1
   } 
   else {
 
-    reg &= ~bitMask; // set the bit to 0
+    reg &= ~bit_mask; // set the bit to 0
   }
 }
 
@@ -113,7 +113,7 @@ void MyController::setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value
  * Clears the bitmask in a specified register.
  * 
  * @param reg The register in which the bitmask should be cleared.
- * @param bitMask The bitmask to be cleared.
+ * @param bit_mask The bitmask to be cleared.
  * 
  * @remarks This method clears the bit to 0 in the specified register by inverting the bitmask and performing a bitwise AND operation.
  * 
@@ -127,9 +127,9 @@ void MyController::setBitMask(volatile uint8_t &reg, uint8_t bitMask, bool value
  * uint8_t mask = 0b00101010;
  * mc.clearBitMask(reg, mask);
  */
-void MyController::clearBitMask(volatile uint8_t &reg, uint8_t bitMask) {
+void MyController::clearBitMask(volatile uint8_t &reg, uint8_t bit_mask) {
 
-  reg &= ~bitMask; // set the bit to 0
+  reg &= ~bit_mask; // set the bit to 0
 }
 
 
@@ -149,41 +149,41 @@ void MyController::clearBitMask(volatile uint8_t &reg, uint8_t bitMask) {
  * MyController myController;
  * myController.setGpioConfig(inputPullUp, DDRA, PORTA, 5);
  */
-void MyController ::setGpioConfig(enum_gpiomodes mode, volatile uint8_t &DDxn, volatile uint8_t &PORTxn, uint8_t bit)
+void MyController ::setGpioConfig(enum_gpiomodes mode, volatile uint8_t &ddxn, volatile uint8_t &portxn, uint8_t bit)
 {
 
   switch (mode) {
 
     case INPUT_TRI_STATE_1:
 
-      setBit(DDxn, bit, 0);
-      setBit(PORTxn, bit, 0);
+      setBit(ddxn, bit, 0);
+      setBit(portxn, bit, 0);
       break;
 
     case INPUT_PULLUP:
 
-      setBit(DDxn, bit, 0);
-      setBit(PORTxn, bit, 1);
+      setBit(ddxn, bit, 0);
+      setBit(portxn, bit, 1);
       setBit(MCUCR, PUD, 0);
       break;
 
     case INPUT_TRI_STATE_2:
 
-      setBit(DDxn, bit, 0);
-      setBit(PORTxn, bit, 1);
+      setBit(ddxn, bit, 0);
+      setBit(portxn, bit, 1);
       setBit(MCUCR, PUD, 1);
       break;
 
     case OUTPUT_SINK:
 
-      setBit(DDxn, bit, 1);
-      setBit(PORTxn, bit, 0);
+      setBit(ddxn, bit, 1);
+      setBit(portxn, bit, 0);
       break;
 
     case OUTPUT_SOURCE:
 
-      setBit(DDxn, bit, 1);
-      setBit(PORTxn, bit, 1);
+      setBit(ddxn, bit, 1);
+      setBit(portxn, bit, 1);
       break;
 
     default:
@@ -250,7 +250,7 @@ void MyController::execDelayUs(uint16_t us) {
     // Anzahl der Iterationen berechnen, basierend auf der CPU-Frequenz
 
     const uint8_t numberOfClkPerNOP {8};
-    uint32_t iterations = ((cpuFreq_ / 1000000) * us / numberOfClkPerNOP);
+    uint32_t iterations = ((F_CPU / 1000000) * us / numberOfClkPerNOP);
 
     // Delay durchführen
     asm volatile (

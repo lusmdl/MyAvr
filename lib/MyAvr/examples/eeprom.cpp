@@ -13,7 +13,7 @@
 
 
 
-MyAtmega328p myAVR(F_CPU);
+MyAtmega328p myAVR;
 
 int value = myAVR.readFromEEPROM(0x10);
 
@@ -21,13 +21,13 @@ int value = myAVR.readFromEEPROM(0x10);
 int main(void) {
 
   // teste den Mikrocontroller
-  myAVR.test(100);
+  myAVR.execTest(100);
 
   // initialisiere die UART
   myAVR.initUart(9600);
 
   // konfiguriere die GPIOs
-  myAVR.setGpioConfig(inputPullUp, DDRD, PORTD, PD3);
+  myAVR.setGpioConfig(INPUT_PULLUP, DDRD, PORTD, PD3);
 
   MyButton btnTest(PIND, PD3, true);
 
@@ -43,10 +43,10 @@ int main(void) {
 
 
 
-    if (btnTest.getStatus())
+    if (btnTest.getStatus().pushed)
     {
       /* Wenn der Taster gedrückt wird */
-      myAVR.delayMs(1000);
+      myAVR.execDelayMs(1000);
       myAVR.printUart("btnTest pressed!\n");
 
       value++;

@@ -9,7 +9,7 @@
  * @param DDXn Reference to the Data Direction Register of the corresponding port
  * @param PORTXn Reference to the Output Register of the corresponding port
  * @param PINXn Reference to the Input Register of the corresponding port
- * @param bitPosition Array of bit positions for the button matrix
+ * @param bit_position Array of bit positions for the button matrix
  * 
  * @warning This method may be unsafe in certain conditions and unexpected behavior could occur.
  * 
@@ -18,16 +18,37 @@
  * @example 
  * MyButtonMatrix2x2 matrix(PORTD, PORTD, PIND, {0, 1, 2, 3});
  */
-MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& PORTXn, volatile uint8_t& PINXn, uint8_t bitPosition[4] ) : 
-  ptrDataDirectionRegister_(&DDXn), 
-  ptrOutputRegister_(&PORTXn), 
-  ptrInputRegister_(&PINXn) {
+MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t& ddxn, volatile uint8_t& portxn, volatile uint8_t& pinxn, uint8_t bit_position[] ) : 
+  // umbau auf POD struct
+  //reg_.ptrDataDirection (&ddxn), 
+  //reg_.ptrPort(&portxn), 
+  //reg_.ptrPin(&pinxn) 
+  reg_ {&ddxn, &portxn, &pinxn} {
 
-  for (uint8_t i = 0; i < 4; i++) {
-
-    bit_[i] = bitPosition[i];
+  for (uint8_t i = 0; i < BTN_MAX_; i++) {
+    
+    // init each member
+    
+    bit_[i] = bit_position[i];
+    button_[i].enableInvert = false;
+    button_[i].fallingEdge = false;
+    button_[i].flagOldPush = false;
+    button_[i].numberGetPushed = 0;
+    button_[i].pushed = false;
+    button_[i].risingEdge = false;
   }
 }
+
+MyButtonMatrix2x2 ::MyButtonMatrix2x2(pod_gpioregister& ptr, uint8_t bit_position[BTN_MAX_]) :
+  reg_ (ptr) {
+
+    for (uint8_t i = 0; i < BTN_MAX_; i++) {
+
+      // init each member
+    
+      bit_[i] = bit_position[i];
+    }
+  }
 
 
 /**
@@ -44,29 +65,93 @@ MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t& DDXn, volatile uint8_t& 
  *   // Do something else
  * }
  */
-bool MyButtonMatrix2x2 ::getButtonStatus(uint8_t button) {  
+pod_buttonstatus MyButtonMatrix2x2 ::getButtonStatus(uint8_t button) {  
 
   uint8_t sense = button % 2;
   uint8_t ground = (button < 2) ? 2 : 3;
   uint8_t live[2] {0,0};
 
   uint8_t count = 0;
-  for (uint8_t i = 0; i < BTN_MAX_; i++)
-  {
+
+  for (uint8_t i = 0; i < BTN_MAX_; i++) {
+
     if (i == sense || i == ground) {
 
-    } else {
+      // nothing to see here
+
+    } 
+    else {
+
       live[count] = i;
       count++;  
     }
   }
 
-  setGpioConfig(INPUT_PULLUP, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[sense]);
-  setGpioConfig(OUTPUT_SINK, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[ground]);
-  setGpioConfig(OUTPUT_SOURCE, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[live[0]]);
-  setGpioConfig(OUTPUT_SOURCE, *ptrDataDirectionRegister_, *ptrOutputRegister_, bit_[live[1]]);
+  setGpioConfig(INPUT_PULLUP, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[sense]);
+  setGpioConfig(OUTPUT_SINK, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[ground]);
+  setGpioConfig(OUTPUT_SOURCE, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[live[0]]);
+  setGpioConfig(OUTPUT_SOURCE, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[live[1]]);
   
   execNop();
+
+  // reset edge flags
   
-  return getBit(*ptrInputRegister_, bit_[sense])? false : true;
+  button_[button].fallingEdge = false;
+  button_[button].risingEdge = false;
+
+  // acutal read register data, use this everytime in this method
+  bool buttonPushed = getBit(*reg_.ptrPin, bit_[sense]) ? false : true;
+  
+  if (buttonPushed) {
+
+    button_[button].pushed = true;
+
+    if (button_[button].flagOldPush == false) {
+
+      // rising edge
+
+      button_[button].risingEdge = true;
+      button_[button].numberGetPushed++;
+    }
+  } 
+  else {
+
+    button_[button].pushed = false;
+
+    if (button_[button].flagOldPush == true) {
+
+      // falling edge
+
+      button_[button].fallingEdge = true;
+    }
+  }
+  
+  // set old flag after
+  button_[button].flagOldPush = buttonPushed;
+  
+  return button_[button];
+}
+
+/**
+ * @brief Sets the status of the button.
+ * 
+ * @param value_new The new value for the amount of button numbers pushed (default value is 0)
+ * 
+ * 
+ * 
+ * 
+*/
+pod_buttonstatus MyButtonMatrix2x2 ::setButtonStatus(uint8_t button, uint32_t value_new) {
+
+  button_[button].numberGetPushed = value_new;
+  
+  if (value_new == 0) {
+
+    // reset everything if new value is zero
+
+    button_[button].pushed = false;
+    button_[button].flagOldPush = false;
+    button_[button].fallingEdge = false;
+    button_[button].risingEdge = false;
+  }
 }

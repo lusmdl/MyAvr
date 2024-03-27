@@ -57,36 +57,41 @@ ISR (TIMER0_COMPA_vect)
   }
 }
 
-MyAtmega328p myAVR(F_CPU);
+MyAtmega328p myAVR;
 
-int main(void)
-{
+int main(void) {
   
   myAVR.execTest(100);
 
   myAVR.initUart(9600);
 
   // init timer0
-  /*
-  calculation
-  F_CPU= 8 Mhz
 
-  8.000.000 / 64(prescaler) = 125.000 
-  125.000 / 1000 = 125
-  125 -1 = 124 (compare value if the quarz is perfect in time)
-  */
-  myAVR.setTC0Config(CTC,CLK_64,124);
+  /**
+   * 
+   * 
+   * 
+   * 
+   * 
+   * calculation
+   * F_CPU= 8 Mhz
+   * 
+   * 8.000.000 / 64(prescaler) = 125.000 
+   * 125.000 / 1000 = 125
+   * 125 -1 = 124 (compare value if the quarz is perfect in time)
+   * 
+   * 
+   * 
+  */ 
+  myAVR.setTC0Config(CTC, CLK_64, 124);
 
 
-  while (1)
-  {
-    /* code */
+  while (1) {
     
     myAVR.printUart("\n----------\nBEGIN LOOP\n");
     myAVR.printUart("millis:\t" + String(millisekunden) + "\nsec:\t" + String(sekunde) + "\nminute:\t" + String(minute) + "\nhour:\t" + String(stunde) + "\n");
     myAVR.execDelayMs(1000);
   }
 
- 
   return 0;
 }

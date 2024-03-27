@@ -28,37 +28,36 @@ wobei das Wechseln des Stromsparmodus manuell durch das Drücken des Resettaster
 
 
 
-MyAtmega328p myAVR(8000000UL);
+MyAtmega328p myAVR;
 
 int main(void)
 {
   
   // teste den Mikrocontroller
-  myAVR.test(100);
+  myAVR.execTest(100);
 
   // initialisiere die UART
   myAVR.initUart(9600);
 
   // LED an Pin PD4 anschließen und als Ausgang konfigurieren
-  myAVR.setGpioConfig(outputSource, DDRD, PORTD, PD4);
+  myAVR.setGpioConfig(OUTPUT_SOURCE, DDRD, PORTD, PD4);
 
   // LED einschalten
   myAVR.setBit(PORTD, PD4, true);
 
   myAVR.printUart("enter sleepmode\n");
-  myAVR.delayMs(1000);
+  myAVR.execDelayMs(1000);
 
   // In den Power Save Modus wechseln
-  myAVR.sleep(powerSave, (1 << PRTIM0), false);
+  myAVR.execSleep(POWER_SAVE, (1 << PRTIM0), false);
   
-
 
   // Programm pausiert hier, bis der Atmega328p aufwacht
-  while (1)
-  {
-  /* code */
+
+  while (1) {
+
   
-  myAVR.printUart("loop\n");
+    myAVR.printUart("loop\n");
   }
   return 0;
 }

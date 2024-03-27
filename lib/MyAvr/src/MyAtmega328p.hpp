@@ -8,7 +8,7 @@
 
 
 /**
- * @brief class for Microchip atmega 328p
+ * @brief class for Microchip ATMEGA 328p
  * 
  * 
  * 
@@ -25,7 +25,7 @@ class MyAtmega328p : public MyController {
 
         // SETTER
 
-        uint32_t setTC01Prescaler(enum_tcprescalers prescaler , volatile uint8_t &reg, uint8_t bit02, uint8_t bit01, uint8_t bit00);
+        uint32_t setTC01Prescaler(enum_tcprescalers prescaler , volatile uint8_t &reg, uint8_t bit_02, uint8_t bit_01, uint8_t bit_00);
 
         // SENDING
 
@@ -41,8 +41,8 @@ class MyAtmega328p : public MyController {
         volatile uint64_t millis_; // Zeit in millisekunden in der der Controller läuft
 
         // CONSTRUCTOR
-        
-        MyAtmega328p(unsigned long freq);
+
+        MyAtmega328p(unsigned long f_cpu = F_CPU);
 
         // SETTER
 

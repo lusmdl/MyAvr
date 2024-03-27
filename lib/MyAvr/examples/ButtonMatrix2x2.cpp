@@ -20,12 +20,12 @@
 #include <MyAvr.hpp>
 
 
-MyAtmega328p myAVR(F_CPU);
+MyAtmega328p myAVR;
 
 int main(void)
 {
   
-  myAVR.test(100);
+  myAVR.execTest(100);
 
   myAVR.initUart(9600);
 
@@ -42,10 +42,10 @@ int main(void)
 
   for ( int i = 0; i < 4; i++)
   {
-    myAVR.printUart ("button #" + String(i) + ": " +  String(btnMatrix.getButtonStatus(i)) + "\n");
+    myAVR.printUart ("button #" + String(i) + ": " +  String(btnMatrix.getButtonStatus(i).pushed) + "\n");
   
   }
-    myAVR.delayMs(1000);
+    myAVR.execDelayMs(1000);
   }
   return 0;
 }
