@@ -4,15 +4,11 @@
 // HEADER
 
 #include "MyAvr.hpp"
-//#include <iostream>
-//#include <list>
-//#include <string.h>
-
 
 
 // Observer Design Pattern
 // 
-// Intent: Lets you define a subscription mechanism to notify multiple objects
+// Intent: Lets you define a subscription mechanism to notifyObserver multiple objects
 // about any events that happen to the object they're observing.
 // 
 // Note that there's a lot of different terms with similar meaning associated
@@ -30,7 +26,7 @@ class interface_Observer {
 
         // EXECUTION
 
-        virtual void exec_Update(const String &message_from_subject) = 0;
+        virtual void update(const String &message_from_subject) = 0;
 };
 
 class interface_Subject {
@@ -44,9 +40,9 @@ class interface_Subject {
 
         // EXECUTION
 
-        virtual void execAttach(interface_Observer *observer) = 0;
-        virtual void execDetach(interface_Observer *observer) = 0;
-        virtual void execNotify() = 0;
+        virtual void attachObserver(interface_Observer *observer) = 0;
+        virtual void detachObserver(interface_Observer *observer) = 0;
+        virtual void notifyObserver() = 0;
 };
 
 
@@ -56,15 +52,26 @@ class interface_Command {
     // The Command interface declares a method for executing a command.
     // Some commands can implement simple operations on their own.
     
+    // class MyCommandExample : public interface_Command {
+    // 
+    //     public:
+    //         virtual void exec() const override {
+    //             
+    //             // implement code here
+    //         }
+    // };
+    
     public:
 
         // DESTRUCTOR
+        
         virtual ~interface_Command() {};
 
         // EXECUTION
 
         virtual void exec() const = 0;
 };
+
 
 
 

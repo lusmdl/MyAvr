@@ -19,12 +19,14 @@
  */
 MyButton ::MyButton(volatile uint8_t &pinxn, uint8_t bit_position, bool invert) : 
   //ptrRegister_(&pinxn), 
-  reg_{nullptr, nullptr, &pinxn},
-  bit_(bit_position), 
+  reg_ {nullptr, nullptr, &pinxn},
+  bit_ (bit_position), 
   //pushed_(false), 
   //numberGetPushed_(0), 
   //enableInvert_(invert) 
-  button_{false, false, false, false, 0, invert} {}
+  button_ {false, false, false, false, 0, invert},
+  command_ (nullptr),
+  observer_ (nullptr) {}
 
 
 /**
@@ -38,7 +40,9 @@ MyButton ::MyButton(volatile uint8_t &pinxn, uint8_t bit_position, bool invert) 
 MyButton ::MyButton(pod_gpioregister &reg, uint8_t bit_position, bool invert) : 
   reg_(reg),
   bit_(bit_position),
-  button_{false, false, false, false, 0, invert} {}
+  button_{false, false, false, false, 0, invert},
+  command_ (nullptr),
+  observer_ (nullptr) {}
 
 
 /**
@@ -101,6 +105,10 @@ pod_buttonstatus MyButton ::getStatus() {
 
       button_.risingEdge = true;
       button_.numberGetPushed++;
+      if (observer_ != nullptr) {
+        
+        notifyObserver();
+      }
     }
   } 
   else {
@@ -148,5 +156,40 @@ void MyButton ::setStatus(uint32_t value_new) {
     button_.flagOldPush = false;
     button_.fallingEdge = false;
     button_.risingEdge = false;
+  }
+}
+
+
+/**
+ * 
+ * 
+ * 
+ * 
+*/
+void MyButton::setCmd(interface_Command *cmd) {
+
+  command_ = cmd;
+}
+
+void MyButton::attachObserver(interface_Observer *observer) {
+
+  observer_ = observer;
+}
+
+void MyButton::detachObserver(interface_Observer *observer) {
+
+  observer_ = nullptr;
+}
+
+void MyButton::notifyObserver() {
+
+  observer_->update("");
+}
+
+void MyButton::execCmd() {
+
+  if (command_) {
+
+    command_->exec();
   }
 }

@@ -6,17 +6,17 @@
 #include "MyAvr.hpp"
 
 
-
-
-class MyButton : private MyController {
+class MyButton : 
+    private MyController, 
+    public interface_Subject {
 
     private:
 
         // MEMBER
 
         // Zeiger auf das Register des Tasters
-        //volatile uint8_t* ptrRegister_;
         pod_gpioregister reg_;
+        //volatile uint8_t* ptrRegister_;
 
         // Bitposition des Tasters im Register
         uint8_t bit_;
@@ -31,6 +31,16 @@ class MyButton : private MyController {
         //bool enableInvert_;
 
         pod_buttonstatus button_;
+
+        // OOP BEHAVIOARAL DESIGN PATTERNS
+
+        // COMMAND
+
+        interface_Command *command_;
+
+        // OBSERVER
+
+        interface_Observer *observer_;
 
     protected:
 
@@ -51,6 +61,19 @@ class MyButton : private MyController {
         // SETTER
 
         void setStatus(uint32_t value_new = 0);
+        void setCmd(interface_Command *cmd);
+
+        // EXECUTE
+
+        // OBSERVER
+
+        virtual void attachObserver(interface_Observer *observer) override;
+        virtual void detachObserver(interface_Observer *observer) override;
+        virtual void notifyObserver() override;
+
+        // COMMAND
+
+        void execCmd();
 };
 
 #endif
