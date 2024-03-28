@@ -1,0 +1,4 @@
+# ignore main file
+# main.cpp is just for testing
+# there is no need to track this file
+.cpp
