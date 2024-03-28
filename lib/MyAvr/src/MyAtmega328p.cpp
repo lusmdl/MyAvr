@@ -30,7 +30,7 @@ MyAtmega328p ::MyAtmega328p(unsigned long f_cpu) {}
  * MyAtmega328p myController;
  * myController.writeToEEPROM(0, "Hello World");
  */
-void MyAtmega328p ::writeToEEPROM(uint16_t address, const String& str) {
+void MyAtmega328p ::writeToEEPROM(uint16_t address, const String &str) {
 
 
   if (address >= 0 && address < E2END) { // Speicherzugriff einschränken auf den EEPROM-Bereich
@@ -63,7 +63,7 @@ void MyAtmega328p ::writeToEEPROM(uint16_t address, const String& str) {
  * MyAtmega328p myController;
  * myController.readFromEEPROM(100, myString, 20);
  */
-void MyAtmega328p ::readFromEEPROM(uint16_t address, String& str, size_t size_buffer) {
+void MyAtmega328p ::readFromEEPROM(uint16_t address, String &str, size_t size_buffer) {
 
   if (address >= 0 && address < E2END) { // Überprüfen, ob Adresse innerhalb des EEPROM-Bereichs liegt
 

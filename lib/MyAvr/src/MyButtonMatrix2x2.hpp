@@ -36,8 +36,8 @@ class MyButtonMatrix2x2 : private MyController {
 
         // CONSTRUCTOR
 
-        MyButtonMatrix2x2(volatile uint8_t& ddxn, volatile uint8_t& portxn, volatile uint8_t& pinxn, uint8_t bit_position[BTN_MAX_]);
-        MyButtonMatrix2x2(pod_gpioregister& ptr, uint8_t bit_position[BTN_MAX_]);
+        MyButtonMatrix2x2(volatile uint8_t &ddxn, volatile uint8_t &portxn, volatile uint8_t &pinxn, uint8_t bit_position[BTN_MAX_]);
+        MyButtonMatrix2x2(pod_gpioregister &ptr, uint8_t bit_position[BTN_MAX_]);
 
 
         // GETTER
