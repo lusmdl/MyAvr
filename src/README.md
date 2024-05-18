@@ -16,7 +16,7 @@ This avoid that I always commit the `main.cpp` with all the other files. I do no
 
 #include <MyAvr.hpp>
 
-int main(int argc, char const *argv[]) {
+int main(void) {
   
   return 0;
 }
