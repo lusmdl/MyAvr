@@ -204,6 +204,16 @@ class MyController {
 
         void clearBit(volatile uint8_t &reg, uint8_t bit);
         void clearBitMask(volatile uint8_t &reg, uint8_t bit_mask);
+
+        // WRITER
+
+        void writeToEEPROM(uint16_t address, uint8_t value);
+        void writeToEEPROM(uint16_t address, const String &str);
+        
+        // READER
+
+        uint8_t readFromEEPROM(uint16_t address);
+        void readFromEEPROM(uint16_t address, String &str, size_t size_buffer);
 };
 
 

@@ -53,15 +53,7 @@ class MyAtmega328p : public MyController {
         void printUart(const char *str);
         void printUart(const String &str);
 
-        // WRITER
-
-        void writeToEEPROM(uint16_t address, uint8_t value);
-        void writeToEEPROM(uint16_t address, const String &str);
         
-        // READER
-
-        uint8_t readFromEEPROM(uint16_t address);
-        void readFromEEPROM(uint16_t address, String &str, size_t size_buffer);
 
         //INIT
 
