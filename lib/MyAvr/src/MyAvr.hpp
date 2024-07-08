@@ -226,6 +226,10 @@ class MyController {
 #include "Atmega328pISR.h"
 #include "MyAtmega328p.hpp"
 
+// ATMEGA 32U4
+
+#include "Atmega32u4.hpp"
+
 
 // PERIPHERALS
 
