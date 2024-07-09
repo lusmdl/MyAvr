@@ -87,7 +87,7 @@ pod_buttonstatus MyButtonMatrix2x2 ::getButtonStatus(uint8_t button) {
     }
   }
 
-  setGpioConfig(INPUT_PULLUP, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[sense]);
+  setGpioConfig(INPUT_INTERN_PULLUP, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[sense]);
   setGpioConfig(OUTPUT_SINK, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[ground]);
   setGpioConfig(OUTPUT_SOURCE, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[live[0]]);
   setGpioConfig(OUTPUT_SOURCE, *reg_.ptrDataDirection, *reg_.ptrPort, bit_[live[1]]);

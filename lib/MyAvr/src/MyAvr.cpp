@@ -160,7 +160,7 @@ void MyController ::setGpioConfig(enum_gpiomodes mode, volatile uint8_t &ddxn, v
       setBit(portxn, bit, 0);
       break;
 
-    case INPUT_PULLUP:
+    case INPUT_INTERN_PULLUP:
 
       setBit(ddxn, bit, 0);
       setBit(portxn, bit, 1);

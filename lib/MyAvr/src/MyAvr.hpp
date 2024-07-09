@@ -35,7 +35,7 @@
 enum enum_gpiomodes {
 
     INPUT_TRI_STATE_1,
-    INPUT_PULLUP,
+    INPUT_INTERN_PULLUP,
     INPUT_TRI_STATE_2,
     OUTPUT_SINK,
     OUTPUT_SOURCE

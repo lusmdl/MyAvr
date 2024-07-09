@@ -20,7 +20,7 @@ int main (void) {
   myAVR.initUart(9600);
 
   // konfiguriere die GPIOs
-  myAVR.setGpioConfig(INPUT_PULLUP, DDRD, PORTD, PD3);
+  myAVR.setGpioConfig(INPUT_INTERN_PULLUP, DDRD, PORTD, PD3);
 
   MyButton btnTest(PIND, PD3, true);
   
