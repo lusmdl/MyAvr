@@ -19,14 +19,18 @@
  */
 MyButton ::MyButton(volatile uint8_t &pinxn, uint8_t bit_position, bool invert) : 
   //ptrRegister_(&pinxn), 
-  reg_ {nullptr, nullptr, &pinxn},
+  //reg_ {nullptr, nullptr, nullptr}, // gibt probleme wegen der struktur
   bit_ (bit_position), 
   //pushed_(false), 
   //numberGetPushed_(0), 
   //enableInvert_(invert) 
-  button_ {false, false, false, false, 0, invert},
+  //button_ {false, false, false, false, 0, invert}, // gibt probleme wegen der struktur
   command_ (nullptr),
-  observer_ (nullptr) {}
+  observer_ (nullptr) {
+
+    reg_.ptrPin = &pinxn;
+    button_.enableInvert = invert;
+  }
 
 
 /**
@@ -40,9 +44,13 @@ MyButton ::MyButton(volatile uint8_t &pinxn, uint8_t bit_position, bool invert) 
 MyButton ::MyButton(pod_gpioregister &reg, uint8_t bit_position, bool invert) : 
   reg_(reg),
   bit_(bit_position),
-  button_{false, false, false, false, 0, invert},
+  //button_{false, false, false, false, 0, invert}, // gibt probleme
   command_ (nullptr),
-  observer_ (nullptr) {}
+  observer_ (nullptr) {
+
+    
+    button_.enableInvert = invert;
+  }
 
 
 /**

@@ -23,7 +23,11 @@ MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t &ddxn, volatile uint8_t &
   //reg_.ptrDataDirection (&ddxn), 
   //reg_.ptrPort(&portxn), 
   //reg_.ptrPin(&pinxn) 
-  reg_ {&ddxn, &portxn, &pinxn} {
+  //reg_ {&ddxn, &portxn, &pinxn} // gibt probleme
+  {
+    reg_.ptrDataDirection = &ddxn;
+    reg_.ptrPort = &portxn;
+    reg_.ptrPin = &pinxn;
 
   for (uint8_t i = 0; i < BTN_MAX_; i++) {
     
