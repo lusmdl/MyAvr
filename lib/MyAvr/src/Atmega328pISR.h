@@ -1,3 +1,5 @@
+#ifdef __AVR_ATmega328P__
+
 #ifndef ATMEGA328PISR_H
 #define ATMEGA328PISR_H
 
@@ -81,4 +83,5 @@ extern "C" {
     // Store Program Memory Ready
     ISR(SPM_READY_vect);
 }
+#endif
 #endif

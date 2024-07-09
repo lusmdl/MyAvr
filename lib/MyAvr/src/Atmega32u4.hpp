@@ -1,3 +1,5 @@
+#ifdef __AVR_ATmega32U4__
+
 #ifndef ATMEGA_32U4_HPP
 #define ATMEGA_32U4_HPP
 
@@ -28,4 +30,5 @@ class MyAtmega32u4 : public MyController {
         
         
 };
+#endif
 #endif

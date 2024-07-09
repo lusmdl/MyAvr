@@ -1,3 +1,5 @@
+#ifdef __AVR_ATmega328P__
+
 #ifndef MYATMEGA328P_HPP
 #define MYATMEGA328P_HPP
 
@@ -64,4 +66,5 @@ class MyAtmega328p : public MyController {
         void execTest(uint16_t delay);
         void execSleep(enum_sleepmodes mode, uint8_t bits_power_reduction, bool enable_bod_sleep);
 };
+#endif
 #endif

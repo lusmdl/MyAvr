@@ -1,3 +1,4 @@
+#ifdef __AVR_ATmega328P__
 
 // HEADER
 #include "MyAtmega328p.hpp"
@@ -445,3 +446,4 @@ void MyAtmega328p::execSleep(enum_sleepmodes mode, uint8_t bits_power_reduction,
   setBit(MCUCR, SE, false);
   clearBitMask(SMCR, BITMASK(SM0) | BITMASK(SM1) | BITMASK(SM2));
 }
+#endif
