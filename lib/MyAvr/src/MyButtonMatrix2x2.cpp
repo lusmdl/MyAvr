@@ -18,7 +18,7 @@
  * @example 
  * MyButtonMatrix2x2 matrix(PORTD, PORTD, PIND, {0, 1, 2, 3});
  */
-MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t &ddxn, volatile uint8_t &portxn, volatile uint8_t &pinxn, uint8_t bit_position[] ) : 
+MyButtonMatrix2x2 ::MyButtonMatrix2x2(volatile uint8_t &ddxn, volatile uint8_t &portxn, volatile uint8_t &pinxn, uint8_t bit_position[] ) //: 
   // umbau auf POD struct
   //reg_.ptrDataDirection (&ddxn), 
   //reg_.ptrPort(&portxn), 
@@ -158,4 +158,6 @@ pod_buttonstatus MyButtonMatrix2x2 ::setButtonStatus(uint8_t button, uint32_t va
     button_[button].fallingEdge = false;
     button_[button].risingEdge = false;
   }
+
+  return button_[button];
 }
