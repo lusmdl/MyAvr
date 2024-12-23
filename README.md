@@ -64,6 +64,9 @@ upload_command = avrdude $UPLOAD_FLAGS -U flash:w:$SOURCE:i
 
 Feel free to modify this `ini` file to suit your configuration. I use the Atmega328p mounted on an Arduino UNO board with my AVR ISP MK2 connected to the board for development projects before transferring the Atmega328p to its new environment.
 
+## Documentation
+The detailed documentation for this project can be found under [doc/software/html/index.html](doc/software/html/index.html)
+
 ## Contributing
 
 If you would like to contribute to this library, please fork the repository and submit a pull request with your changes. Ensure to write tests for any new features added.
